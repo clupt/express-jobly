@@ -15,8 +15,8 @@ const { BadRequestError, NotFoundError } = require("../expressError");
  *
  * Return:
  * {
- *     filterCols: `name=$1 AND num_employees=$2`
- *     values: ['net', '3', '5']
+ *    filterCols: `"name" ILIKE $1 AND "num_employees" >= $2 AND "num_employees" <= $3`,
+      values: ['%net%', 3, 5]
  * }
  *
  */
@@ -28,16 +28,16 @@ function sqlForFilteredData(dataToFilter, jsToSql) {
   const cols = [];
   const vals = [];
   for (let idx = 0; idx < keys.length; idx++) {
-    if (dataToFilter?.nameLike) {
-      cols.push(`"${jsToSql[colName] || colName}" ILIKE $%${idx + 1}%`);
+    if (keys[idx] === "nameLike") {
+      cols.push(`"${jsToSql[keys[idx]] || keys[idx]}" ILIKE $${idx + 1}`);
+      vals.push(`%${dataToFilter[keys[idx]]}%`);
+    }
+    if (keys[idx] === "minEmployees") {
+      cols.push(`"${jsToSql[keys[idx]] || keys[idx]}" >= $${idx + 1}`);
       vals.push(dataToFilter[keys[idx]]);
     }
-    if (dataToFilter?.minEmployees) {
-      cols.push(`"${jsToSql[colName] || colName}" >= $${idx + 1}`);
-      vals.push(dataToFilter[keys[idx]]);
-    }
-    if (dataToFilter?.maxEmployees) {
-      cols.push(`"${jsToSql[colName] || colName}" <= $${idx + 1}`);
+    if (keys[idx] === "maxEmployees") {
+      cols.push(`"${jsToSql[keys[idx]] || keys[idx]}" <= $${idx + 1}`);
       vals.push(dataToFilter[keys[idx]]);
     }
   }

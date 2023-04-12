@@ -53,16 +53,12 @@ class Company {
   /** Find all companies.
    *
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
-   *
-   *  {
-    *    nameLike : "net",
-    *    minEmployees : 3,
-    *    maxEmployees : 4
- * }
+   * Accepts optional filter object with nameLike, minEmployees, and maxEmployees.
+   * If provided, will filter results. Else, will return all companies. 
    * */
 
   static async findAll(filter) {
-    if ((filter === undefined) || !filter) {
+    if (!filter) {
       const companiesRes = await db.query(
         `SELECT handle,
                 name,
@@ -76,10 +72,12 @@ class Company {
       const filteredData = sqlForFilteredData(
         filter,
           {
-            "nameLike": name,
-            "minEmployees": num_employees,
-            "maxEmployees" : num_employees
+            "nameLike": "name",
+            "minEmployees": "num_employees",
+            "maxEmployees" : "num_employees"
           });
+
+      // console.log("filteredData ", filteredData);
 
       const companiesFiltered = await db.query(
         `SELECT handle,

@@ -51,13 +51,32 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
  */
 
 router.get("/", async function (req, res, next) {
-  const filter = req.params;
+  let companies;
+  const searchQuery = req.query;
+  if (searchQuery.minEmployees
+    && searchQuery.maxEmployees
+    && searchQuery.minEmployees > searchQuery.maxEmployees) {
+      throw new BadRequestError(
+        "minEmployees cannot be greater than maxEmployees"
+      );
+    }
 
-  const nameLike = req.query?.nameLike;
-  const minEmployees = req.query?.minEmployees;
-  const maxEmployees = req.query?.maxEmployees;
-
-  const companies = await Company.findAll();
+  if (!Object.keys(searchQuery).length){
+    companies = await Company.findAll();
+  } else {
+      const validFilters = ["minEmployees", "maxEmployees", "nameLike"]
+      const filterData = {};
+      for (let filter in searchQuery){
+        if (validFilters.includes(filter)) {
+          filterData[filter] = searchQuery[filter];
+        } else {
+          throw new BadRequestError(
+            "only filter on minEmployees, maxEmployess, and nameLike"
+      );
+    }
+  }
+    companies = await Company.findAll(filterData);
+}
 
   return res.json({ companies });
 });
