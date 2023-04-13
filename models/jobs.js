@@ -21,7 +21,7 @@ class Job {
           title,
           salary,
           equity,
-          company_handle,
+          company_handle
           )
            VALUES
              ($1, $2, $3, $4)
@@ -30,7 +30,7 @@ class Job {
         title,
         salary,
         equity,
-        company_handle,
+        companyHandle,
       ],
     );
     const company = result.rows[0];
