@@ -53,9 +53,9 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
 router.get("/", async function (req, res, next) {
   let companies;
   const searchQuery = req.query;
-  if (searchQuery.minEmployees // TODO: minEmployees in searchQuery
-    && searchQuery.maxEmployees
-    && searchQuery.minEmployees > searchQuery.maxEmployees) { // TODO: write a test to catch this bug: this data is currently strings; make them nums
+  if ("minEmployees" in searchQuery
+    && "maxEmployees" in searchQuery
+    && parseInt(searchQuery.minEmployees) > parseInt(searchQuery.maxEmployees)) {
       throw new BadRequestError(
         "minEmployees cannot be greater than maxEmployees"
       );
