@@ -81,7 +81,7 @@ describe("POST /users", function () {
           lastName: "Last-newL",
           password: "password-new",
           email: "new@email.com",
-          isAdmin: true,
+          isAdmin: false, 
         })
         .set("authorization", `Bearer ${u1Token}`);
     expect(resp.statusCode).toEqual(403);
@@ -96,7 +96,7 @@ describe("POST /users", function () {
           lastName: "Last-newL",
           password: "password-new",
           email: "new@email.com",
-          isAdmin: true,
+          isAdmin: false, 
         });
     expect(resp.statusCode).toEqual(401);
   });

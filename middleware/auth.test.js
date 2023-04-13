@@ -74,4 +74,11 @@ describe("ensureAdmin", function () {
       const res = { locals: { user: { username: "test", isAdmin: false } } };
       expect(() => ensureAdmin(req, res, next)).toThrowError();
     });
+
+    test("unauth if isAdmin is not true", function () {
+      const req = {};
+      const res = { locals: { user: { username: "test", isAdmin: "false" } } };
+      expect(() => ensureAdmin(req, res, next)).toThrowError();
+    })
+
 });
