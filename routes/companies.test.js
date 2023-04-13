@@ -65,6 +65,7 @@ describe("POST /companies", function () {
 
 /************************************** GET /companies */
 
+/** GET /companies without filtering */
 describe("GET /companies", function () {
   test("ok for anon", async function () {
     const resp = await request(app).get("/companies");
@@ -94,33 +95,63 @@ describe("GET /companies", function () {
           },
         ],
     });
-    //works for one thing being filtered
-    //works for everything that can be filtered being filtered
-    //fails when min > max
-    //works when just name filtering is being done
-    describe("GET /companies", function () {
-      test("test fails when min > max", async function () {
+  });
 
+  /** GET /companies with filtering */
+  describe("GET /companies", function () {
+      test("test fails when min > max", async function () {
+        const resp = await request(app).get(
+          '/companies/?nameLike=2&minEmployees=5&maxEmployees=1'
+        );
+        expect(resp.statusCode).toEqual(400);
       });
 
       test("test fails when inappropriate data passed to field", async function () {
-
+        const resp = await request(app).get(
+          '/companies/?nameLike=2&minEmployees=5&numJobs=6'
+        );
+        expect(resp.statusCode).toEqual(400);
       });
 
       test("test for min filtering working", async function () {
-        const resp = await request(app).get(`/companies`);
-        const { minEmployees } = req.params;
-
-      });
-
-      test("test for name filtering working", async function () {
+        const resp = await request(app).get(
+          '/companies/?minEmployees=2'
+        );
+        expect(resp.body).toEqual({companies: [
+          {
+            handle: "c2",
+            name: "C2",
+            description: "Desc2",
+            numEmployees: 2,
+            logoUrl: "http://c2.img",
+          },
+          {
+            handle: "c3",
+            name: "C3",
+            description: "Desc3",
+            numEmployees: 3,
+            logoUrl: "http://c3.img",
+          },
+        ]})
 
       });
 
       test("test for all filtering working", async function () {
-
+        const resp = await request(app).get(
+          '/companies/?nameLike=2&minEmployees=2&maxEmployees=3'
+        );
+        expect(resp.body).toEqual({companies: [
+          {
+            handle: "c2",
+            name: "C2",
+            description: "Desc2",
+            numEmployees: 2,
+            logoUrl: "http://c2.img",
+          }
+        ]})
       });
     });
+
 
     test("fails: test next() handler", async function () {
       // there's no normal failure event which will cause this route to fail ---

@@ -1,3 +1,5 @@
+"use strict"; 
+
 const { BadRequestError } = require("../expressError");
 
 /** Converts data object to SQL compatible object with parameterization.

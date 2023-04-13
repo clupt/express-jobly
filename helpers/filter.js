@@ -1,4 +1,5 @@
 "use strict";
+
 const { BadRequestError, NotFoundError } = require("../expressError");
 /**
  * Takes an object (from query params) some jsToSql to be changed
@@ -21,6 +22,9 @@ const { BadRequestError, NotFoundError } = require("../expressError");
  *
  */
 
+// TODO: this function isn't really generic. maybe put it as a class method in the companies model
+// remove jsToSql and just put what you need for column names
+// also don't need the iteration. You're only looking for 3 items and check 
 function sqlForFilteredData(dataToFilter, jsToSql) {
   const keys = Object.keys(dataToFilter);
   if (keys.length === 0) throw new BadRequestError("No data");
@@ -28,16 +32,20 @@ function sqlForFilteredData(dataToFilter, jsToSql) {
   const cols = [];
   const vals = [];
   for (let idx = 0; idx < keys.length; idx++) {
+    // if ("nameLike" in dataToFilter) {                 // this is a stragegy without the for loop
+    //   vals.push(`%${dataToFilter["nameLike"]}%`);      
+    //   cols.push(`"${jsToSql[keys[idx]]}" ILIKE ${vals.length}`);
+    // }
     if (keys[idx] === "nameLike") {
-      cols.push(`"${jsToSql[keys[idx]] || keys[idx]}" ILIKE $${idx + 1}`);
+      cols.push(`"${jsToSql[keys[idx]]}" ILIKE $${idx + 1}`);
       vals.push(`%${dataToFilter[keys[idx]]}%`);
     }
     if (keys[idx] === "minEmployees") {
-      cols.push(`"${jsToSql[keys[idx]] || keys[idx]}" >= $${idx + 1}`);
+      cols.push(`"${jsToSql[keys[idx]]}" >= $${idx + 1}`);
       vals.push(dataToFilter[keys[idx]]);
     }
     if (keys[idx] === "maxEmployees") {
-      cols.push(`"${jsToSql[keys[idx]] || keys[idx]}" <= $${idx + 1}`);
+      cols.push(`"${jsToSql[keys[idx]]}" <= $${idx + 1}`);
       vals.push(dataToFilter[keys[idx]]);
     }
   }

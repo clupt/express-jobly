@@ -1,3 +1,5 @@
+"use strict"; 
+
 const {sqlForFilteredData} = require("./filter");
 const { BadRequestError } = require("../expressError");
 

@@ -58,24 +58,37 @@ class Company {
    * */
 
   static async findAll(filter) {
-    if (!filter) {
-      const companiesRes = await db.query(
-        `SELECT handle,
-                name,
-                description,
-                num_employees AS "numEmployees",
-                logo_url AS "logoUrl"
-           FROM companies
-           ORDER BY name`);
-      return companiesRes.rows;
-    } else {
-      const filteredData = sqlForFilteredData(
-        filter,
+    // if (!filter) {
+    //   const companiesRes = await db.query(
+    //     `SELECT handle,
+    //             name,
+    //             description,
+    //             num_employees AS "numEmployees",
+    //             logo_url AS "logoUrl"
+    //        FROM companies
+    //        ORDER BY name`);
+    //   return companiesRes.rows;
+    // } else {
+    //   const filteredData = sqlForFilteredData(
+    //     filter,
+    //       {
+    //         "nameLike": "name",
+    //         "minEmployees": "num_employees",
+    //         "maxEmployees" : "num_employees"
+    //       });
+
+      let where = '';
+      let values = [];
+      if (filter) {
+        const filteredData = sqlForFilteredData(filter,
           {
             "nameLike": "name",
             "minEmployees": "num_employees",
             "maxEmployees" : "num_employees"
-          });
+          })
+        where = "WHERE " + filteredData.filterCols;
+        values = filteredData.values;
+      }
 
       // console.log("filteredData ", filteredData);
 
@@ -86,14 +99,14 @@ class Company {
                 num_employees AS "numEmployees",
                 logo_url AS "logoUrl"
           FROM companies
-          WHERE ${filteredData.filterCols}
+          ${where}
           ORDER BY name
         `,
-        filteredData.values
-      );
+        values
+        );
       return companiesFiltered.rows;
     }
-  }
+
 
   /** Given a company handle, return data about company.
    *

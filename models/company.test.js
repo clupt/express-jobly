@@ -85,7 +85,25 @@ describe("findAll", function () {
       },
     ]);
   });
-});
+
+  test("works: filter", async function () {
+    const filterData = {
+      nameLike : "1",
+      minEmployees : 1,
+      maxEmployees : 2
+    }
+    let companies = await Company.findAll(filterData);
+    expect(companies).toEqual([
+      {
+        handle: "c1",
+        name: "C1",
+        description: "Desc1",
+        numEmployees: 1,
+        logoUrl: "http://c1.img",
+      }
+    ]);
+    })
+  });
 
 /************************************** get */
 
