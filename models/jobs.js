@@ -87,11 +87,11 @@ class Job {
 
   static async get(id) {
     const jobRes = await db.query(
-      `SELECT id
+      `SELECT id,
               title,
               salary,
               equity,
-              company_handle AS "companyHandle",
+              company_handle AS "companyHandle"
            FROM jobs
            WHERE id = $1`,
       [id]);
@@ -127,7 +127,7 @@ class Job {
     const querySql = `
       UPDATE jobs
       SET ${setCols}
-        WHERE handle = ${idVarIdx}
+        WHERE id = ${idVarIdx}
         RETURNING id, title, salary, equity, company_handle AS "companyHandle"`;
     const result = await db.query(querySql, [...values, id]);
     const job = result.rows[0];
