@@ -40,12 +40,16 @@ function ensureLoggedIn(req, res, next) {
 
 /** Middleware to use when they must be admin.
  *
- * If not, raises Unauthorized.
+ * If not, raises Forbidden.
  */
 
-function ensureAdmin(req, res, next) {
-  if (res.locals.user.isAdmin === false) throw new ForbiddenError();
-  return next();
+function ensureAdmin(req, res, next) { 
+  const user = res.locals.user;
+  if (user && user.isAdmin === true) {
+    return next();
+}
+
+  throw new ForbiddenError();
 }
 
 
