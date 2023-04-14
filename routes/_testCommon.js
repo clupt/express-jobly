@@ -12,29 +12,29 @@ async function commonBeforeAll() {
   await db.query("DELETE FROM companies");
 
   await Company.create(
-      {
-        handle: "c1",
-        name: "C1",
-        numEmployees: 1,
-        description: "Desc1",
-        logoUrl: "http://c1.img",
-      });
+    {
+      handle: "c1",
+      name: "C1",
+      numEmployees: 1,
+      description: "Desc1",
+      logoUrl: "http://c1.img",
+    });
   await Company.create(
-      {
-        handle: "c2",
-        name: "C2",
-        numEmployees: 2,
-        description: "Desc2",
-        logoUrl: "http://c2.img",
-      });
+    {
+      handle: "c2",
+      name: "C2",
+      numEmployees: 2,
+      description: "Desc2",
+      logoUrl: "http://c2.img",
+    });
   await Company.create(
-      {
-        handle: "c3",
-        name: "C3",
-        numEmployees: 3,
-        description: "Desc3",
-        logoUrl: "http://c3.img",
-      });
+    {
+      handle: "c3",
+      name: "C3",
+      numEmployees: 3,
+      description: "Desc3",
+      logoUrl: "http://c3.img",
+    });
 
   await User.register({
     username: "u1",
@@ -68,6 +68,19 @@ async function commonBeforeAll() {
     password: "password4",
     isAdmin: true,
   });
+  await Job.create ({
+    title: "j1",
+    salary: 400,
+    equity: 0.4,
+    companyHandle: "c1"
+  });
+  //TODO: THIS DOESNT LEAVE FN SCOPE
+  const jobQuery = await db.query(
+    `SELECT id
+     FROM jobs
+     WHERE title LIKE '%j1%'
+  `);
+  const j1Id = jobQuery.rows[0].id;
 }
 
 async function commonBeforeEach() {
@@ -87,6 +100,7 @@ const u2Token = createToken({ username: "u2", isAdmin: false });
 const adminToken = createToken({ username: "admin", isAdmin: true });
 
 
+
 module.exports = {
   commonBeforeAll,
   commonBeforeEach,
@@ -94,5 +108,7 @@ module.exports = {
   commonAfterAll,
   u1Token,
   u2Token,
-  adminToken
+  adminToken,
+  jobQuery,
+  j1Id
 };
