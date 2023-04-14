@@ -49,15 +49,12 @@ class Job {
       let where = '';
       let values = [];
       if (filter) {
-        const filteredData = sqlForFilteredJobData(filter,
-          {
-            "title" : "title",
-            "minSalary": "salary",
-            "hasEquity" : "equity"
-          })
+        const filteredData = Job._sqlForFilteredJobData(filter)
         where = "WHERE " + filteredData.filterCols;
         values = filteredData.values;
       }
+
+      console.log("where, values", where, values);
 
       // console.log("filteredData ", filteredData);
 
@@ -153,7 +150,54 @@ class Job {
 
     if (!job) throw new NotFoundError(`No job: ${id}`);
   }
-}
+
+  /**
+ * Takes an object (from query params) to be changed into a SQL WHERE clause for
+ * Job filtering
+ * Returns a Object with a string of 'AND' separated values
+ * filterCols -> names of columns we are filtering on (title, salary, equity)
+ * values -> values to filter those columns on
+ *
+ * ex://
+ * {
+ *    title : "net",
+ *    minSalary : 300,
+ *    hasEquity : true
+ * }
+ *
+ * Return:
+ * {
+ *    filterCols: `"title" ILIKE $1 AND "salary" >= $2 AND "equity" > 0`,
+      values: ['%net%', 300]
+ * }
+ *
+ */
+
+  static _sqlForFilteredJobData(dataToFilter) {
+    const keys = Object.keys(dataToFilter);
+    if (keys.length === 0) throw new BadRequestError("No data");
+
+    const cols = [];
+    const vals = [];
+      if ("title" in dataToFilter) {
+        vals.push(`%${dataToFilter["title"]}%`);      
+        cols.push(`"title" ILIKE $${vals.length}`);
+      }
+      if ("minSalary" in dataToFilter) {
+        vals.push(`${dataToFilter["minSalary"]}`);      
+        cols.push(`"salary" >= $${vals.length}`);
+      }
+      if ("hasEquity" in dataToFilter && dataToFilter["hasEquity"] === true) {
+        cols.push(`"equity" > 0`);
+      }
+
+      return {
+        filterCols: cols.join(" AND "), //things passed into WHERE clause
+        values: vals //parameters
+  };
+};
+
+};
 
 
 module.exports = Job;

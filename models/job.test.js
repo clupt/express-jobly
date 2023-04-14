@@ -92,17 +92,18 @@ describe("findAll", function () {
 
   test("works: filter", async function () {
     const filterData = {
-      title : "1",
-      minSalary : 100,
+      title : "3",
+      minSalary : 200,
       hasEquity : true
     }
     let jobs = await Job.findAll(filterData);
     expect(jobs).toEqual([
       {
         id: expect.any(Number),
-        title: "j1",
-        salary: 100,
-        equity: "0.1",
+        title: "j3",
+        salary: 300,
+        equity: "0.3",
+        companyHandle: "c3"
       }
     ]);
     })
@@ -228,3 +229,41 @@ describe("remove", function () {
     }
   });
 });
+
+/****************************************** _sqlForFilteredData */
+describe("_sqlForFilteredJobData", function () {
+  test("works, all data provided", function () {
+      const validData = {
+        title: "net",
+        minSalary: 200,
+        hasEquity: true  
+      };
+      const result = Job._sqlForFilteredJobData(validData);
+
+      expect(result).toEqual({
+        filterCols: `"title" ILIKE $1 AND "salary" >= $2 AND "equity" > 0`,
+        values: ['%net%', "200"]});
+  });
+
+  test("works, some data provided", function () {
+      const validData = {
+          minSalary : 200,
+      }
+      const result = Job._sqlForFilteredJobData(validData);
+
+      expect(result).toEqual({
+          filterCols: `"salary" >= $1`,
+          values: ["200"]});
+  });
+
+  test("fails: empty filter object", function () {
+      const invalidData = {};
+
+      try {
+          Job._sqlForFilteredJobData(invalidData);
+          throw new Error("fail test");
+      } catch (err) {
+          expect(err instanceof BadRequestError).toBeTruthy();
+      }
+  })
+})
