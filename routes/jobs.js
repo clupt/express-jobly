@@ -92,7 +92,7 @@ router.get("/", async function (req, res, next) {
  */
 
 router.get("/:id", async function (req, res, next) {
-  const job = await Job.get(req.params.handle);
+  const job = await Job.get(req.params.id);
   return res.json({ job });
 });
 
@@ -107,13 +107,13 @@ router.get("/:id", async function (req, res, next) {
  * Authorization required: login and admin
  */
 
-router.patch("/:handle",
+router.patch("/:id",
                 ensureLoggedIn,
                 ensureAdmin,
                 async function (req, res, next) {
   const validator = jsonschema.validate(
     req.body,
-    companyUpdateSchema,
+    jobUpdateSchema,
     {required:true}
   );
   if (!validator.valid) {
@@ -121,8 +121,8 @@ router.patch("/:handle",
     throw new BadRequestError(errs);
   }
 
-  const company = await Company.update(req.params.handle, req.body);
-  return res.json({ company });
+  const job = await Job.update(req.params.id, req.body);
+  return res.json({ job });
 });
 
 /** DELETE /[handle]  =>  { deleted: handle }
@@ -130,12 +130,12 @@ router.patch("/:handle",
  * Authorization: login and admin
  */
 
-router.delete("/:handle",
+router.delete("/:id",
                   ensureLoggedIn,
                   ensureAdmin,
                   async function (req, res, next) {
-  await Company.remove(req.params.handle);
-  return res.json({ deleted: req.params.handle });
+  await Job.remove(req.params.id);
+  return res.json({ deleted: req.params.id });
 });
 
 

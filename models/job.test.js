@@ -33,7 +33,7 @@ describe("create", function () {
     equity: 0.4,
     companyHandle: 'c1',
   };
-  
+
   test("works", async function () {
     let job = await Job.create(newJob);
     expect(job).toEqual({
@@ -114,7 +114,7 @@ describe("get", function () {
   test("works", async function () {
     let job = await Job.get(j1Id);
     expect(job).toEqual({
-      id: expect.any(Number),
+      id: j1Id,
       title: "j1",
       salary: 100,
       equity: "0.1",

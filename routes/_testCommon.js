@@ -3,7 +3,11 @@
 const db = require("../db.js");
 const User = require("../models/user");
 const Company = require("../models/company");
+const Job = require("../models/job");
 const { createToken } = require("../helpers/tokens");
+
+
+const jobIds = [];
 
 async function commonBeforeAll() {
   // noinspection SqlWithoutWhere
@@ -70,17 +74,32 @@ async function commonBeforeAll() {
   });
   await Job.create ({
     title: "j1",
-    salary: 400,
-    equity: 0.4,
+    salary: 100,
+    equity: 0.1,
     companyHandle: "c1"
   });
-  //TODO: THIS DOESNT LEAVE FN SCOPE
+  await Job.create ({
+    title: "j2",
+    salary: 200,
+    equity: 0.2,
+    companyHandle: "c2"
+  });
+  await Job.create ({
+    title: "j3",
+    salary: 300,
+    equity: 0.3,
+    companyHandle: "c3"
+  });
+
+
   const jobQuery = await db.query(
     `SELECT id
      FROM jobs
-     WHERE title LIKE '%j1%'
   `);
   const j1Id = jobQuery.rows[0].id;
+  const j2Id = jobQuery.rows[1].id;
+  const j3Id = jobQuery.rows[2].id;
+  jobIds.push(j1Id, j2Id, j3Id);
 }
 
 async function commonBeforeEach() {
@@ -109,6 +128,5 @@ module.exports = {
   u1Token,
   u2Token,
   adminToken,
-  jobQuery,
-  j1Id
+  jobIds
 };
