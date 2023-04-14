@@ -87,6 +87,13 @@ describe("findAll", function () {
         equity: "0.3",
         companyHandle: "c3",
       },
+      {
+        id: expect.any(Number),
+        title: "j4",
+        salary: 400,
+        equity: "0",
+        companyHandle: "c1",
+      },
     ]);
   });
 
@@ -236,7 +243,7 @@ describe("_sqlForFilteredJobData", function () {
       const validData = {
         title: "net",
         minSalary: 200,
-        hasEquity: true  
+        hasEquity: true
       };
       const result = Job._sqlForFilteredJobData(validData);
 
@@ -255,13 +262,16 @@ describe("_sqlForFilteredJobData", function () {
           filterCols: `"salary" >= $1`,
           values: ["200"]});
   });
-  // TODO: write this test
-    // test("works: has equity", function () {
-    //   const hasEquity = {
-    //     hasEquity: true
-    //   }
 
-    // })
+  test("works: has equity as a string", function () {
+      const validData = {
+        hasEquity: "true"
+      }
+      const result = Job._sqlForFilteredJobData(validData);
+      expect(result).toEqual({
+        filterCols: `"equity" > 0`,
+        values: []});
+    })
 
   test("fails: empty filter object", function () {
       const invalidData = {};
