@@ -67,12 +67,14 @@ router.get("/", async function (req, res, next) {
   let jobs;
   const searchQuery = req.query;
 
+  console.log("searchQuery", searchQuery);
+
   if (!Object.keys(searchQuery).length){
     jobs = await Job.findAll();
-  }
-
-  jobs = await Job.findAll(filterData);
+  } else {
+  jobs = await Job.findAll(searchQuery);
   console.log("jobs=", jobs);
+  }
   return res.json({ jobs });
 });
 

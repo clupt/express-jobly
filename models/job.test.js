@@ -255,6 +255,13 @@ describe("_sqlForFilteredJobData", function () {
           filterCols: `"salary" >= $1`,
           values: ["200"]});
   });
+  // TODO: write this test
+    // test("works: has equity", function () {
+    //   const hasEquity = {
+    //     hasEquity: true
+    //   }
+
+    // })
 
   test("fails: empty filter object", function () {
       const invalidData = {};
@@ -265,5 +272,6 @@ describe("_sqlForFilteredJobData", function () {
       } catch (err) {
           expect(err instanceof BadRequestError).toBeTruthy();
       }
-  })
+  });
+
 })

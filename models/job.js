@@ -70,6 +70,8 @@ class Job {
         `,
         values
         );
+
+      console.log("jobsFiltered", jobsFiltered.rows);
       return jobsFiltered.rows;
     }
 
@@ -187,7 +189,7 @@ class Job {
         vals.push(`${dataToFilter["minSalary"]}`);      
         cols.push(`"salary" >= $${vals.length}`);
       }
-      if ("hasEquity" in dataToFilter && dataToFilter["hasEquity"] === true) {
+      if ("hasEquity" in dataToFilter && Boolean(dataToFilter["hasEquity"]) === true) {
         cols.push(`"equity" > 0`);
       }
 
