@@ -51,11 +51,9 @@ router.post("/", ensureLoggedIn, ensureAdmin, async function (req, res, next) {
  * Authorization required: none
  */
 
-//TODO: come back to this after filter
-
 router.get("/", async function (req, res, next) {
   const validator = jsonschema.validate(
-    req.body,
+    req.query,
     jobFilterSchema,
     {required: false}
   );
@@ -73,7 +71,6 @@ router.get("/", async function (req, res, next) {
     jobs = await Job.findAll();
   } else {
   jobs = await Job.findAll(searchQuery);
-  console.log("jobs=", jobs);
   }
   return res.json({ jobs });
 });

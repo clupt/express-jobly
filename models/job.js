@@ -49,6 +49,12 @@ class Job {
       let where = '';
       let values = [];
       if (filter) {
+        if(filter["hasEquity"] === "true"){
+          filter["hasEquity"] = true;
+        } else{
+          (filter["hasEquity"] = false);
+        }
+
         const filteredData = Job._sqlForFilteredJobData(filter)
         where = "WHERE " + filteredData.filterCols;
         values = filteredData.values;
@@ -70,8 +76,6 @@ class Job {
         `,
         values
         );
-
-      console.log("jobsFiltered", jobsFiltered.rows);
       return jobsFiltered.rows;
     }
 
@@ -182,21 +186,23 @@ class Job {
     const cols = [];
     const vals = [];
       if ("title" in dataToFilter) {
-        vals.push(`%${dataToFilter["title"]}%`);      
+        vals.push(`%${dataToFilter["title"]}%`);
         cols.push(`"title" ILIKE $${vals.length}`);
       }
       if ("minSalary" in dataToFilter) {
-        vals.push(`${dataToFilter["minSalary"]}`);      
+        vals.push(dataToFilter["minSalary"]);
         cols.push(`"salary" >= $${vals.length}`);
       }
-      if ("hasEquity" in dataToFilter && Boolean(dataToFilter["hasEquity"]) === true) {
+      if ("hasEquity" in dataToFilter && dataToFilter["hasEquity"] === true) {
         cols.push(`"equity" > 0`);
+      } else {
+        cols.push(`"equity" >= 0`);
       }
 
       return {
         filterCols: cols.join(" AND "), //things passed into WHERE clause
         values: vals //parameters
-  };
+      };
 };
 
 };

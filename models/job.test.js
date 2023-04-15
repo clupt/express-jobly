@@ -249,7 +249,7 @@ describe("_sqlForFilteredJobData", function () {
 
       expect(result).toEqual({
         filterCols: `"title" ILIKE $1 AND "salary" >= $2 AND "equity" > 0`,
-        values: ['%net%', "200"]});
+        values: ['%net%', 200]});
   });
 
   test("works, some data provided", function () {
@@ -259,17 +259,17 @@ describe("_sqlForFilteredJobData", function () {
       const result = Job._sqlForFilteredJobData(validData);
 
       expect(result).toEqual({
-          filterCols: `"salary" >= $1`,
-          values: ["200"]});
+          filterCols: `"salary" >= $1 AND "equity" >= 0`,
+          values: [200]});
   });
 
-  test("works: has equity as a string", function () {
+  test("works: has no equity", function () {
       const validData = {
-        hasEquity: "true"
+        hasEquity: false
       }
       const result = Job._sqlForFilteredJobData(validData);
       expect(result).toEqual({
-        filterCols: `"equity" > 0`,
+        filterCols: `"equity" >= 0`,
         values: []});
     })
 

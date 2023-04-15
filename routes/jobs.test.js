@@ -133,6 +133,54 @@ describe("GET /jobs", function () {
   });
 });
 
+/** GET /jobs with filtering */
+describe("GET /jobs", function () {
+
+  test("test fails when hasEquity not boolean", async function () {
+    const resp = await request(app).get(
+      '/jobs/?hasEquity=0'
+    );
+    expect(resp.statusCode).toEqual(400);
+  });
+
+  test("test fails when inappropriate data passed to field", async function () {
+    const resp = await request(app).get(
+      '/jobs?isHiring=eqfrewq'
+    );
+    expect(resp.statusCode).toEqual(400);
+  });
+
+  test("test for all filtering working", async function () {
+    const resp = await request(app).get(
+      '/jobs?hasEquity=true&minSalary=2&title=j2'
+    );
+    expect(resp.body).toEqual(
+      {
+        jobs: [
+          {
+            id: expect.any(Number),
+            title: "j2",
+            salary: 200,
+            equity: "0.2",
+            companyHandle: "c2",
+          }
+        ]
+      });
+  });
+});
+
+
+test("fails: test next() handler", async function () {
+  // there's no normal failure event which will cause this route to fail ---
+  // thus making it hard to test that the error-handler works with it. This
+  // should cause an error, all right :)
+  await db.query("DROP TABLE jobs CASCADE");
+  const resp = await request(app)
+    .get("/jobs")
+    .set("authorization", `Bearer ${u1Token}`);
+  expect(resp.statusCode).toEqual(500);
+});
+
 /************************************** GET /jobs/:id */
 
 describe("GET /jobs/:id", function () {
@@ -246,7 +294,7 @@ describe("DELETE /jobs/:id", function () {
 
   test("unauth for anon", async function () {
     const resp = await request(app)
-      .delete(`/jobs/${j1Id}`)
+      .delete(`/jobs/${j1Id}`);
     expect(resp.statusCode).toEqual(401);
   });
 

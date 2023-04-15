@@ -83,6 +83,13 @@ describe("findAll", function () {
         numEmployees: 3,
         logoUrl: "http://c3.img",
       },
+      {
+        handle: "c4",
+        name: "C4",
+        description: "Desc4",
+        numEmployees: 4,
+        logoUrl: "http://c4.img",
+      },
     ]);
   });
 
@@ -116,6 +123,20 @@ describe("get", function () {
       description: "Desc1",
       numEmployees: 1,
       logoUrl: "http://c1.img",
+      jobs: [{
+        id: expect.any(Number),
+        title: "j1",
+        salary: 100,
+        equity: "0.1"
+      },
+      {
+        id: expect.any(Number),
+        title: "j4",
+        salary: 400,
+        equity: "0"
+      }
+
+    ]
     });
   });
 
@@ -127,6 +148,18 @@ describe("get", function () {
       expect(err instanceof NotFoundError).toBeTruthy();
     }
   });
+
+  test("company with no jobs", async function() {
+    let company = await Company.get("c4");
+    expect(company).toEqual({
+      handle: "c4",
+      name: "C4",
+      description: "Desc4",
+      numEmployees: 4,
+      logoUrl: "http://c4.img",
+    });
+  })
+
 });
 
 /************************************** update */

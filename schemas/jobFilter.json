@@ -9,11 +9,12 @@
         "maxLength": 100
       },
       "minSalary": {
-        "type": "integer",
-        "minimum": 0
+        "type" : "string",
+        "pattern" : "^[0-9]*$"
       },
       "hasEquity": {
-        "type": "boolean"
+        "type": "string",
+        "enum": ["true", "false"]
       }
     },
     "additionalProperties": false,

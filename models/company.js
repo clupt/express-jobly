@@ -54,7 +54,7 @@ class Company {
    *
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * Accepts optional filter object with nameLike, minEmployees, and maxEmployees.
-   * If provided, will filter results. Else, will return all companies. 
+   * If provided, will filter results. Else, will return all companies.
    * */
 
   static async findAll(filter) {
@@ -129,8 +129,24 @@ class Company {
 
     const company = companyRes.rows[0];
 
-    if (!company) throw new NotFoundError(`No company: ${handle}`);
+    const jobsRes = await db.query(
+      `SELECT id,
+              title,
+              salary,
+              equity
+          FROM jobs
+          WHERE company_handle = $1
+      `,
+      [handle]);
 
+    const jobs = jobsRes.rows;
+
+    if (!company) throw new NotFoundError(`No company: ${handle}`);
+    if(!jobs.length){
+      return company;
+    }
+
+    company["jobs"] = jobs;
     return company;
   }
 
